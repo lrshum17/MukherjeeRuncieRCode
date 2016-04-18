@@ -31,12 +31,6 @@ sample_Us = function(Factors, genetic_effects, svd_ZZ_Ainv, Z_1){
       genetic_effects$U[j,] = t(Q %*% (mlam + z[,j] * (1/sqrt(d))))
     }
   }
-
-  #   genetic_effects.U(j,:) = zeros(1,n)
-  #   elseif tau_e(j) == Inf
-  #   genetic_effects.U(j,:) = Factors.scores(j,:)
-  #   else
-  #   
 }
 
 
