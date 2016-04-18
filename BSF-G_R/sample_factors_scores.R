@@ -8,8 +8,8 @@ sample_factors_scores = function(Ytil, Factors, resid, genetic_effects, Z_1){
   Lambda = Factors$Lambda
   Lmsg = Lambda * resid$ps
   tau_e = 1/(1-Factors$h2)
-  S = t(chol(t(Lambda)*Lmsg+diag(tau_e)))
-  Meta = inv(t(S)) %*% (inv(S) %*% (t(Lmsg)*Ytil + genetic_effects$U*Z_1 * tau_e))
+  S = t(chol(t(Lambda) %*% Lmsg+diag(tau_e)))
+  Meta = inv(t(S)) %*% (inv(S) %*% ((t(Lmsg) %*% Ytil + genetic_effects$U * Z_1 * tau_e)))
   Factors$scores = Meta + inv(t(S)) %*% matrix(rnorm(k*n), nrow = k) 
   return(Factors)
 }
