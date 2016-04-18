@@ -49,12 +49,12 @@ sample_lambda = function(Ytil, Factors, resid, genetic_effects, eig_ZAZ){
 # 
 # Zlams = normrnd(0,1,k,p);
 # for j = 1:p,
-# FUDi = genetic_effects.ps(j)*bsxfun(@times,FtU,1./(eta' + genetic_effects.ps(j)/resid.ps(j)));
-#                                                    means = FUDi*UtY(:,j);
-#                                                    Qlam = FUDi*FtU' + diag(Factors.Plam(j,:)); 
-#                                                    Llam = chol(Qlam,'lower');
-#                                                    vlam = Llam\means; mlam = Llam'\vlam; ylam = Llam'\Zlams(:,j);
-#                                                    Factors.Lambda(j,:) = (ylam + mlam);
-#                                                    end
-#                                                    end
+#   FUDi = genetic_effects.ps(j)*bsxfun(@times,FtU,1./(eta' + genetic_effects.ps(j)/resid.ps(j)));
+#   means = FUDi*UtY(:,j);
+#   Qlam = FUDi*FtU' + diag(Factors.Plam(j,:)); 
+#   Llam = chol(Qlam,'lower');
+#   vlam = Llam\means; mlam = Llam'\vlam; ylam = Llam'\Zlams(:,j);
+#   Factors.Lambda(j,:) = (ylam + mlam);
+# end
+# end
 #                                                    
