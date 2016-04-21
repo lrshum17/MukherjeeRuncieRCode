@@ -56,7 +56,7 @@ sample_delta = function(Factors, Lambda2_resid){
     bd = bd2 + 0.5 * (1/delta[h]) %*% sum(tauh[h:length(tauh)] * sum(t(mat[,h:length(tauh)])))
   
     # Again generating a random number 
-    delta[h] = gamrnd(1, shape = ad, scale = 1/bd)
+    delta[h] = rgamma(1, shape = ad, scale = 1/bd)
     
     tauh = cumprod(delta)
   }
