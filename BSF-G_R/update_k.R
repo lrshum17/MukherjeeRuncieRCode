@@ -22,7 +22,7 @@ update_k = function(Factors, genetic_effects, b0, b1, i, epsilon, prop, Z_1){
   lind = mean(abs(Lambda[gene_rows,]) < epsilon)
   
   # number of redundant columns
-  vec = lind >=prop
+  vec = lind >= prop
   num = sum(vec)
   
   Factors$num = num
@@ -32,30 +32,32 @@ update_k = function(Factors, genetic_effects, b0, b1, i, epsilon, prop, Z_1){
     if(i > 20 && num == 0 && all(lind < 0.995) && k < 2*p){ #add a column
       k = k + 1
       Factors$k = k
-      Factors$psijh[,k] = gamrnd(df/2,2/df,[p,1]) #rgamma(1, shape = ad, scale = 1/bd)
+      Factors$psijh[,k] = rgamma(p, shape = df/2, scale = df/2)
       Factors$delta[k,1] = rgamma(1, shape = ad2, scale = 1/bd2)
       Factors$tauh = cumprod(Factors$delta)
       Factors$Plam = Factors$psijh * t(Factors$tauh)
-                            Factors$Lambda[,k] = randn(p,1).*sqrt(1./Factors$Plam[,k])
-                            Factors$h2[k] = rand
-                            Factors$accept_h2_proposal[k] = 0
-                            genetic_effects$U[k,] = randn(1, genetic_effects$n)
-                            Factors$scores[k,] = genetic_effects$U[k,]*Z_1 + randn(1,r).*sqrt(1-Factors$h2[k])
-                            elseif num > 0      # drop redundant columns
-                            nonred = setdiff(1:k, find(vec)) # non-redundant loadings columns
-                            k = max(k - num,1)
-                            Factors$k = k
-                            Factors$Lambda = Lambda[,nonred]
-                            Factors$psijh = Factors$psijh[,nonred]
-                            Factors$scores = Factors$scores[nonred,]
-                            for red = setdiff(1:k-1, nonred){
-                              #combine deltas so that the shrinkage of kept columns doesnt
-                              #decrease after dropping redundant columns
-                              Factors$delta[red+1] = Factors$delta[red+1] * Factors$delta[red]
-                            }
-                            Factors$delta = Factors$delta[nonred]
-                            Factors$tauh = cumprod(Factors$delta)
-                            Factors$Plam = Factors$psijh * t(Factors$tauh)
+      Factors$Lambda[,k] = runif(p).*sqrt(1./Factors$Plam[,k]) #check
+      Factors$h2[k] = runif(1)
+      Factors$accept_h2_proposal[k] = 0
+      genetic_effects$U[k,] = runif(genetic_effects$n)
+      Factors$scores[k,] = genetic_effects$U[k,]*Z_1 + runif(r).*sqrt(1-Factors$h2[k]) #check
+    }
+    else if(num > 0){      # drop redundant columns
+      nonred = setdiff(1:k, which(vec != 0)) # non-redundant loadings columns
+      k = max(k - num,1)
+      Factors$k = k
+      Factors$Lambda = Lambda[,nonred]
+      Factors$psijh = Factors$psijh[,nonred]
+      Factors$scores = Factors$scores[nonred,]
+      red = setdiff(1:k-1, nonred)
+      for(r in red){
+        #combine deltas so that the shrinkage of kept columns doesnt
+        #decrease after dropping redundant columns
+        Factors$delta[r+1] = Factors$delta[r+1] * Factors$delta[r]
+      }
+      Factors$delta = Factors$delta[nonred]
+      Factors$tauh = cumprod(Factors$delta)
+      Factors$Plam = Factors$psijh * t(Factors$tauh)
       Factors$h2 = Factors$h2[nonred]
       genetic_effects$U = genetic_effects$U[nonred,]
     }
@@ -64,4 +66,8 @@ update_k = function(Factors, genetic_effects, b0, b1, i, epsilon, prop, Z_1){
   Factors$nofout[i+1] = k
   
   return(c(Factors, genetic_effects))
+}
+
+for(i in c(1,2,5)){
+  v1[i] = v1[i] + 1
 }
