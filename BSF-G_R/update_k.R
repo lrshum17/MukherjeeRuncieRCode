@@ -36,11 +36,11 @@ update_k = function(Factors, genetic_effects, b0, b1, i, epsilon, prop, Z_1){
       Factors$delta[k,1] = rgamma(1, shape = ad2, scale = 1/bd2)
       Factors$tauh = cumprod(Factors$delta)
       Factors$Plam = Factors$psijh * t(Factors$tauh)
-      Factors$Lambda[,k] = runif(p).*sqrt(1./Factors$Plam[,k]) #check
+      Factors$Lambda[,k] = runif(p) * sqrt(1/Factors$Plam[,k]) #check
       Factors$h2[k] = runif(1)
       Factors$accept_h2_proposal[k] = 0
       genetic_effects$U[k,] = runif(genetic_effects$n)
-      Factors$scores[k,] = genetic_effects$U[k,]*Z_1 + runif(r).*sqrt(1-Factors$h2[k]) #check
+      Factors$scores[k,] = genetic_effects$U[k,] * Z_1 + runif(r) * sqrt(1-Factors$h2[k]) #check
     }
     else if(num > 0){      # drop redundant columns
       nonred = setdiff(1:k, which(vec != 0)) # non-redundant loadings columns
@@ -66,8 +66,4 @@ update_k = function(Factors, genetic_effects, b0, b1, i, epsilon, prop, Z_1){
   Factors$nofout[i+1] = k
   
   return(c(Factors, genetic_effects))
-}
-
-for(i in c(1,2,5)){
-  v1[i] = v1[i] + 1
 }
