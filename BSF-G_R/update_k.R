@@ -40,7 +40,7 @@ update_k = function(Factors, genetic_effects, b0, b1, i, epsilon, prop, Z_1){
       Factors$h2[k] = runif(1)
       Factors$accept_h2_proposal[k] = 0
       genetic_effects$U[k,] = runif(genetic_effects$n)
-      Factors$scores[k,] = genetic_effects$U[k,] * Z_1 + runif(r) * sqrt(1-Factors$h2[k]) #check
+      Factors$scores[k,] = genetic_effects$U[k,] %*% Z_1 + runif(r) * sqrt(1-Factors$h2[k]) #check
     }
     else if(num > 0){      # drop redundant columns
       nonred = setdiff(1:k, which(vec != 0)) # non-redundant loadings columns
