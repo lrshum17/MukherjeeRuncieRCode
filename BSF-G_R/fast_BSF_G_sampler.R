@@ -368,12 +368,12 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%continue from previous Y residual above
   Ytil = Ytil - Factors$Lambda %*% Factors$scores
   n = nrow(Y)
-  resid$ps = matrix(rgamma(nrow(resid$as)*ncol(resid$as), shape = resid$as + 0.5*n, scale = 1/(resid$bs+0.5 %*% colSums(Ytil^2))), nrow(resid$as), ncol(resid$as))  #%model residual precision
+  resid$ps = matrix(rgamma(nrow(resid$as)*ncol(resid$as), shape = resid$as + 0.5*n, scale = 1/(resid$bs+0.5 %*% t(rowSums(Ytil^2)))), nrow(resid$as), ncol(resid$as))  #%model residual precision
   n = genetic_effects$n
-  genetic_effects$ps =  matrix(rgamma(nrow(genetic_effects$as)*ncol(genetic_effects$as), shape = genetic_effects$as + 0.5*n, scale = 1/(genetic_effects$bs+ 0.5 %*% colSums(genetic_effects$d^2))),
+  genetic_effects$ps =  matrix(rgamma(nrow(genetic_effects$as)*ncol(genetic_effects$as), shape = genetic_effects$as + 0.5*n, scale = 1/(genetic_effects$bs+ 0.5 %*% t(rowSums(genetic_effects$d^2)))),
                                nrow(genetic_effects$as), ncol(genetic_effects$as)) #%random effect 1 (D) residual precision
   n = interaction_effects$n
-  interaction_effects$ps = matrix(rgamma(nrow(interaction_effects$as)*ncol(interaction_effects$as), shape = interaction_effects$as + 0.5*n, scale = 1/(interaction_effects$bs+0.5 %*% colSums(interaction_effects$W^2))),
+  interaction_effects$ps = matrix(rgamma(nrow(interaction_effects$as)*ncol(interaction_effects$as), shape = interaction_effects$as + 0.5*n, scale = 1/(interaction_effects$bs+0.5 %*% t(rowSums(interaction_effects$W^2)))),
                                   nrow(interaction_effects$as), ncol(interaction_effects$as)) #%random effect 2 (W) residual precision
                                                                     
   #%------Update delta & tauh------%

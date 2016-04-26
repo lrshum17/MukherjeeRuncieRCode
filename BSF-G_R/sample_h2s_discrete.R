@@ -26,7 +26,7 @@ sample_h2s_discrete = function(Factors, eig_ZAZ){
       det = 0
     }
     
-    log_ps[,i] = rowSums(log(dnorm(std_scores))) - det
+    log_ps[,i] = t(rowSums(log(dnorm(std_scores)))) - det
     
     if(i == 1){
       log_ps = log_ps + log(s-1)
