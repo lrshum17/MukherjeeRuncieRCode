@@ -75,6 +75,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%         draw_simulation_diagnostics.m: For simulated data with known true values
   #%         draw_results_diagnostics.m: Otherwise
 
+  ##  MAKE THESE VARIABLES?
   clear Y
   clear Z_1
   clear Z_2
@@ -173,7 +174,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   Factors$ad2 = ad2
   Factors$bd2 = bd2
   Factors$psijh = matrix(rgamma(p*k, rate = df/2, scale = 2/df), nrow = p, ncol = k)   #%individual loadings precisions
-  Factors$delta = [gamrnd(ad1+10,1/bd1);gamrnd(ad2,1/bd2,[k-1,1])];  #% components of tauh !!!!!!need size
+  Factors$delta = [gamrnd(ad1+10,1/bd1);gamrnd(ad2,1/bd2,[k-1,1])];  #% components of tauh !!!!!! NEED SIZE
   Factors$tauh = cumprod(Factors$delta)                              #%extra shrinkage of each loading column
   Factors$Plam = Factors$psijh * t(Factors$tauh)          #%total precision of each loading
   Factors$Lambda = zeros(p,k) + matrix(runif(m*n), nrow = m, ncol = n) * reshape(sqrt(1/Factors$Plam),p,k)   #%factor loadings
@@ -188,100 +189,100 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%effects. U is latent genetic effects on factor traits. d is genetic
   #%effects on residuals of the factor traits. Plus prior hyperparameters for
   #%genetic effect precisions
-                        genetic_effects$n = nrow(Z_1)
-                        as = priors$as
-                        bs = priors$bs
-                        genetic_effects$as = as
-                        genetic_effects$bs = bs
-                        genetic_effects$ps = rgamma(p, rate = as, scale = 1/bs)
-                        genetic_effects$U = matrix(rnorm(k*r),k,r) * sqrt(Factors$h2)
-                        genetic_effects$d = matrix(rnorm(p*r),p,r) * 1/sqrt(genetic_effects$ps)
-                        
-                        #%interaction_effects. Similar to genetic_effects structure except for
-                        #%additional random effects that do not contribute to variation in the
-                        #%factor traits
-                        as = priors$as
-                        bs = priors$bs
-                        interaction_effects$as = as
-                        interaction_effects$bs = bs
-                        interaction_effects$ps = rgamma(p, rate = as, scale = 1/bs)
-                        interaction_effects$mean = zeros(p,r2)
-                        interaction_effects$n = r2
-                        interaction_effects$W = matrix(rnorm(p*r2),p,r2) * 1/sqrt(interaction_effects$ps)
-                        interaction_effects$W_out = zeros(p,r2)
-                        
-                        #%fixed_effects hold B
-                        fixed_effects$b = b
-                        fixed_effects$cov = zeros(b,b) #%inverse covariance of fixed effects
-                        fixed_effects$mean = zeros(p,b) #%mean of fixed effects
-                        fixed_effects$B = matrix(rnorm(p*b),p,b) #%current estimate of fixed effects
-                        
-                        Factors$scores = genetic_effects$U * Z_1 + matrix(rnorm(k*n),k,n) * sqrt(1-Factors$h2) #%initialize factor scores
-                        
-                        #%Posterior holds Posterior samples and Posterior means
-                        Posterior$Lambda = zeros(0,sp)
-                        Posterior$no_f = zeros(sp,1)
-                        Posterior$ps = zeros(p,sp)
-                        Posterior$resid_ps = zeros(nrow(resid$ps),sp)
-                        Posterior$B = zeros(p,nrow(X))
-                        Posterior$U = zeros(0,sp)
-                        Posterior$d = zeros(p,nrow(Z_1))
-                        Posterior$W = zeros(p,nrow(Z_2))
-                        Posterior$delta = zeros(0,sp)
-                        Posterior$G_h2 = zeros(0,sp)
-                        
-                        #%save run parameters and hyperparameters
-                        
-                        params$p = p
-                        params$n = n
-                        params$r = r
-                        params$Mean_Y = Mean_Y
-                        params$VY = VY
-                        params$b0 = b0
-                        params$b1 = b1
-                        params$epsilon = epsilon
-                        params$prop = prop
-                        params$as = priors$as
-                        params$bs = priors$bs
-                        params$df = priors$df
-                        params$ad1 = priors$ad1
-                        params$bd1 = priors$bd1
-                        params$ad2 = priors$ad2
-                        params$bd2 = priors$bd2
-                        params$burn = burn
-                        params$thin = thin
-                        params$sp = sp
-                        params$nrun = nrun
-                        params$h2_divisions = h2_divisions
-                        
-                        if(simulation){
-                          params$U_act = U_act
-                          params$Lambda = error_factor_Lambda
-                          params$h2 = h2
-                          params$G = G
-                          params$R = R
-                          params$B = B
-                          params$factor_h2s = factor_h2s
-                          params$name = name
-                        }
-                        
-                        #%precalculate some matrices
-                        #%invert the random effect covariance matrices
-                        Ainv = solve(A)
-                        A_2_inv = diag(1, nrow(Z_2)) #%Z_2 random effects are assumed to have covariance proportional to the identity. Can be modified.
-                        
-                        #%pre-calculate transformation parameters to diagonalize aI + bZAZ for fast
-                        #%inversion: inv(aI + bZAZ) = 1/b*u*diag(1./(s+a/b))*u'
-                        #%uses singular value decomposition of ZAZ for stability when ZAZ is low
-                        #%rank
-                        ZAZ = t(Z_1) %*% A %*% Z_1
-                        [u,s,~] = svd(ZAZ)$d
-                        eig_ZAZ$vectors = u
-                        eig_ZAZ$values = diag(s)
-    
-                        #%fixed effects + random effects 1
-                        #%diagonalize mixed model equations for fast inversion: 
-                        #%inv(a*blkdiag(fixed_effects.cov,Ainv) + b*[X; Z_1][X; Z_1]') = Q*diag(1./(a.*s1+b.*s2))*Q'
+  genetic_effects$n = nrow(Z_1)
+  as = priors$as
+  bs = priors$bs
+  genetic_effects$as = as
+  genetic_effects$bs = bs
+  genetic_effects$ps = rgamma(p, rate = as, scale = 1/bs)
+  genetic_effects$U = matrix(rnorm(k*r),k,r) * sqrt(Factors$h2)
+  genetic_effects$d = matrix(rnorm(p*r),p,r) * 1/sqrt(genetic_effects$ps)
+  
+  #%interaction_effects. Similar to genetic_effects structure except for
+  #%additional random effects that do not contribute to variation in the
+  #%factor traits
+  as = priors$as
+  bs = priors$bs
+  interaction_effects$as = as
+  interaction_effects$bs = bs
+  interaction_effects$ps = rgamma(p, rate = as, scale = 1/bs)
+  interaction_effects$mean = zeros(p,r2)
+  interaction_effects$n = r2
+  interaction_effects$W = matrix(rnorm(p*r2),p,r2) * 1/sqrt(interaction_effects$ps)
+  interaction_effects$W_out = zeros(p,r2)
+  
+  #%fixed_effects hold B
+  fixed_effects$b = b
+  fixed_effects$cov = zeros(b,b) #%inverse covariance of fixed effects
+  fixed_effects$mean = zeros(p,b) #%mean of fixed effects
+  fixed_effects$B = matrix(rnorm(p*b),p,b) #%current estimate of fixed effects
+  
+  Factors$scores = genetic_effects$U * Z_1 + matrix(rnorm(k*n),k,n) * sqrt(1-Factors$h2) #%initialize factor scores
+  
+  #%Posterior holds Posterior samples and Posterior means
+  Posterior$Lambda = zeros(0,sp)
+  Posterior$no_f = zeros(sp,1)
+  Posterior$ps = zeros(p,sp)
+  Posterior$resid_ps = zeros(nrow(resid$ps),sp)
+  Posterior$B = zeros(p,nrow(X))
+  Posterior$U = zeros(0,sp)
+  Posterior$d = zeros(p,nrow(Z_1))
+  Posterior$W = zeros(p,nrow(Z_2))
+  Posterior$delta = zeros(0,sp)
+  Posterior$G_h2 = zeros(0,sp)
+  
+  #%save run parameters and hyperparameters
+  
+  params$p = p
+  params$n = n
+  params$r = r
+  params$Mean_Y = Mean_Y
+  params$VY = VY
+  params$b0 = b0
+  params$b1 = b1
+  params$epsilon = epsilon
+  params$prop = prop
+  params$as = priors$as
+  params$bs = priors$bs
+  params$df = priors$df
+  params$ad1 = priors$ad1
+  params$bd1 = priors$bd1
+  params$ad2 = priors$ad2
+  params$bd2 = priors$bd2
+  params$burn = burn
+  params$thin = thin
+  params$sp = sp
+  params$nrun = nrun
+  params$h2_divisions = h2_divisions
+  
+  if(simulation){
+    params$U_act = U_act
+    params$Lambda = error_factor_Lambda
+    params$h2 = h2
+    params$G = G
+    params$R = R
+    params$B = B
+    params$factor_h2s = factor_h2s
+    params$name = name
+  }
+  
+  #%precalculate some matrices
+  #%invert the random effect covariance matrices
+  Ainv = solve(A)
+  A_2_inv = diag(1, nrow(Z_2)) #%Z_2 random effects are assumed to have covariance proportional to the identity. Can be modified.
+  
+  #%pre-calculate transformation parameters to diagonalize aI + bZAZ for fast
+  #%inversion: inv(aI + bZAZ) = 1/b*u*diag(1./(s+a/b))*u'
+  #%uses singular value decomposition of ZAZ for stability when ZAZ is low
+  #%rank
+  ZAZ = t(Z_1) %*% A %*% Z_1
+  [u,s,~] = svd(ZAZ)$d
+  eig_ZAZ$vectors = u
+  eig_ZAZ$values = diag(s)
+  
+  #%fixed effects + random effects 1
+  #%diagonalize mixed model equations for fast inversion: 
+  #%inv(a*blkdiag(fixed_effects.cov,Ainv) + b*[X; Z_1][X; Z_1]') = Q*diag(1./(a.*s1+b.*s2))*Q'
   Design = rbind(X, Z_1)
   Design2 = Design %*% t(Design)
   [~,~,q,S1,S2] = GSVD(Cholesky(blkdiag(fixed_effects$cov, Ainv)), Cholesky(Design2))
@@ -290,41 +291,42 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   svd_Design_Ainv$s2 = diag(t(S2) %*% S2)
   Qt_Design = t(svd_Design_Ainv$Q) %*% Design      
                           
-                          #%random effects 2
-                          #%as above, but for random effects 2. Here, fixed effects will be conditioned on, not sampled simultaneously. Otherwise identical.
-                          Design = Z_2
-                          Design2 = Design %*% t(Design)
-                          [~,~,q,S1,S2] = GSVD(Cholesky(A_2_inv), Cholesky(Design2))
-                          svd_Z2_2_A2inv$Q = t(solve(q))
-                          svd_Z2_2_A2inv$s1 = diag(t(S1) %*% S1)
-                          svd_Z2_2_A2inv$s2 = diag(t(S2) %*%S2)
-                          Qt_Z2 = t(svd_Z2_2_A2inv$Q) %*% Design
-                          
-                          #%genetic effect variances of factor traits
-                          #% diagonalizing a*Z_1*Z_1' + b*Ainv for fast inversion
-                          #%diagonalize mixed model equations for fast inversion: 
-                          #% inv(a*Z_1*Z_1' + b*Ainv) = Q*diag(1./(a.*s1+b.*s2))*Q'
-                          #%similar to fixed effects + random effects 1 above, but no fixed effects.
-                                  ZZt = Z_1 %*% t(Z_1)
-                                  [~,~,q,S1,S2] = GSVD(Cholesky(ZZt), Cholesky(Ainv))
-                                  svd_ZZ_Ainv$Q = t(solve(q))
-                                  svd_ZZ_Ainv$s1 = diag(t(S1) %*% S1)
-                                  svd_ZZ_Ainv$s2 = diag(t(S2) %*% S2)
-                                  
-                                  #%------start gibbs sampling-----%
-                                  sp_num = 0
-                                  tic
-                                  for(i in 1:nrun){
-                                    #%fill in missing phenotypes
-                                    #%conditioning on everything else
-                                    phenMissing = is.nan(Y_full) # which indices
-                                    if(sum(sum(phenMissing)) > 0){
-                                    meanTraits = fixed_effects$B %*% X +  genetic_effects$d %*% Z_1 
-                                    + interaction_effects$W %*% Z_2 + Factors$Lambda %*% Factors$scores
-                                    meanTraits = t(meanTraits)        
-                                    resids = matrix(randn(dim(Y_full)), nrow(Y_full), ncol(Y_full)) * 1/sqrt(t(resid$ps))
-                                    Y[phenMissing] = meanTraits[phenMissing] + resids[phenMissing]
-                                    }
+  #%random effects 2
+  #%as above, but for random effects 2. Here, fixed effects will be conditioned on, not sampled simultaneously. Otherwise identical.
+  Design = Z_2
+  Design2 = Design %*% t(Design)
+  [~,~,q,S1,S2] = GSVD(Cholesky(A_2_inv), Cholesky(Design2))
+  svd_Z2_2_A2inv$Q = t(solve(q))
+  svd_Z2_2_A2inv$s1 = diag(t(S1) %*% S1)
+  svd_Z2_2_A2inv$s2 = diag(t(S2) %*%S2)
+  Qt_Z2 = t(svd_Z2_2_A2inv$Q) %*% Design
+  
+  #%genetic effect variances of factor traits
+  #% diagonalizing a*Z_1*Z_1' + b*Ainv for fast inversion
+  #%diagonalize mixed model equations for fast inversion: 
+  #% inv(a*Z_1*Z_1' + b*Ainv) = Q*diag(1./(a.*s1+b.*s2))*Q'
+  #%similar to fixed effects + random effects 1 above, but no fixed effects.
+  ZZt = Z_1 %*% t(Z_1)
+  [~,~,q,S1,S2] = GSVD(Cholesky(ZZt), Cholesky(Ainv))
+  svd_ZZ_Ainv$Q = t(solve(q))
+  svd_ZZ_Ainv$s1 = diag(t(S1) %*% S1)
+  svd_ZZ_Ainv$s2 = diag(t(S2) %*% S2)
+  
+  #%------start gibbs sampling-----%
+  sp_num = 0
+  #tic
+  for(i in 1:nrun){
+    #%fill in missing phenotypes
+    #%conditioning on everything else
+    phenMissing = is.nan(Y_full) # which indices
+    
+    if(sum(sum(phenMissing)) > 0){
+      meanTraits = fixed_effects$B %*% X +  genetic_effects$d %*% Z_1 
+      + interaction_effects$W %*% Z_2 + Factors$Lambda %*% Factors$scores
+      meanTraits = t(meanTraits)        
+      resids = matrix(randn(dim(Y_full)), nrow(Y_full), ncol(Y_full)) * 1/sqrt(t(resid$ps))
+      Y[phenMissing] = meanTraits[phenMissing] + resids[phenMissing]
+    }
 
   #%sample Lambda
   #%conditioning on W, X, F, marginalizing over D
@@ -423,7 +425,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
     }
   }
 }
-  toc
+  #toc
   save('Posterior','Posterior','params')
   
   return(Posterior, params)
