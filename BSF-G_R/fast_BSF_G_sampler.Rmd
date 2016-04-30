@@ -1,0 +1,69 @@
+---
+title: "fast_BSF_G_sampler"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Gibbs sampler for genetic covariance estimation based on mixed effects model, with missing data.\
+\
+Based on:\
+Runcie and Mukherjee (2013) Dissecting high-dimensional traits with Bayesian sparse factor analysis of genetic covariance matrices.\
+GENETICS.\
+(c) April 22, 2013\
+Code modified from original provided by Anirban Bhattacharya\
+\
+This function implements the BSF-G partially collapsed Gibbs sampler. It loads all input data and matrices from setup.mat in the current directory. Priors and control parameters are passed to the function.\
+\
+setup.mat is a struct with at least:\
+Y: data matrix\
+X: fixed effect design matrix\
+Z_1: random effect design matrix for factor model\
+Z_2: additional random effect design matrix\
+A: Additive genetic relationship matrix\
+\   
+For analysis of Ayroles et al 2009 data, can include:\
+Ayroles_results: struct holding gene names and correlations estimated in that paper.\
+\
+For analysis of simulations:\
+U_act: r x p matrix of true breeding values\
+E_act: n x p matrix of true model residuals\
+gen_factor_Lambda: p x k_G matrix of true genetic factor loadings\
+error_factor_Lambda: p x k matrix of true residual factor loadings\
+h2: p x 1 vector of true heritabilities\
+factor_h2s: k x 1 vector of true latent factor heritabilities\
+G, R: p x p matrix of true genetic and residual covariances
+
+##Usage
+fast_BSF_G_sampler(burn, sp, thin, b0, b1, h2_divisions, epsilon, priors, draw_iter)
+
+##Arguments
+burn: number of burnin samples\
+sp: total number of samples to collect\
+thin: thinning rate of chain\
+b0,b1: parameters controlling rate of adaptation of factor model size\
+h2_divisions: number of discrete steps for each factor heritability parameter\
+epsilon: truncation point for factor loadings during adaptation\
+draw_iter: frequency of updating diagnostic plots\
+priors: struct holding various prior hyperparameters:\ 
+k_init: initial number of factors to initialize\
+as, bs: inverse gamma hyperparameters for model residuals, as well as non-factor random effects\
+df: degrees of freedom for t-distribution of ARD prior on factor loadings\
+ad1, bd1: inverse gamma hyperparamters for first factor shrinkage multiplier (/delta_1)\
+ad2, bd2: inverse gamma hyperparamters for remaining factor shrinkage multiplier (/delta_i, i in 2...k)
+ 
+##Value
+struct, Posterior, with the following fields:\
+Lambda, U, no_f, ps, resid_ps, delta, G_h2: matrices with each column a (vectorized if necessary) posterior sample of the:\
+Lambda: factor loading matrix\
+U: genetic random effect matrix\
+no_f: number of significant factors\
+ps: genetic residual precision after accounting for latent factors
+resid_ps: phenotypic residual precision\
+delta: column shrinkage parameters for Lambda\
+G_h2: factor heritabilties\
+B, d, W: matrices of posterior means of fixed effect (B), residual genetic (d), or 2nd random effect (W) coefficients. Some may be empty\
+\
+Several diagnostic plots are produced during the run. Their interpretation is described within the source codes:\
+draw_simulation_diagnostics.m: For simulated data with known true values
