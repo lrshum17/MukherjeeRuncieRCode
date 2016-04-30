@@ -1,0 +1,25 @@
+---
+title: "sample_Us"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Samples genetic effects (U) conditional on the factor scores F:\
+F_i = U_i + E_i, E_i~N(0,s2*(h2*ZAZ + (1-h2)*I)) for each latent trait i\
+U_i = zeros(r,1) if h2_i = 0\
+It is assumed that s2 = 1 because this scaling factor is absorbed in Lambda\
+svd_ZZ_Ainv has parameters to diagonalize a*Z_1*Z_1' + b*I for fast inversion
+
+##Usage
+sample_Us(Factors, genetic_effects, svd_ZZ_Ainv, Z_1)
+
+##Arguments
+Factors\
+genetic_effects\
+svd_ZZ_Ainv\
+Z_1
+
+##Value
+Genetic_effects

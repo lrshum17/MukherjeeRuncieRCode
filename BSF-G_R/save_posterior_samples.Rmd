@@ -1,0 +1,25 @@
+---
+title: "save_posterior_samples"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Save posteriors. Re-scale samples back to original variances.
+
+##Usage
+save_posterior_samples(sp_num, params, Posterior, resid, fixed_effects, genetic_effects, Factors, interaction_effects)
+
+##Arguments
+sp_num\
+params\
+Posterior\
+resid\
+fixed_effects\
+genetic_effects\
+Factors\
+interaction_effects
+
+##Value
+Posterior
