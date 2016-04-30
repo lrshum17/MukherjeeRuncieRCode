@@ -1,0 +1,19 @@
+---
+title: "sample_h2s_discrete"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Sample factor heritibilties from a discrete set on [0,1). Prior places 50% of the weight at h2=0. Samples conditional on F, marginalizes over U.
+
+##Usage
+sample_h2s_discrete(Factors, eig_ZAZ)
+
+##Arguments
+Factors\
+eig_ZAZ
+
+##Value
+Factors

@@ -1,0 +1,25 @@
+---
+title: "update_k"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Adapt the number of factors by dropping factors with only small loadings if they exist, or adding new factors sampled from the prior if all factors appear important. The rate of adaptation decreases through the chain, controlled by b0 and b1.
+
+##Usage
+update_k(Factors, genetic_effects, b0, b1, i, epsilon, prop, Z_1)
+
+##Arguments
+Factors\
+genetic_effects\
+b0\
+b1\
+i\
+epsilon\
+prop\
+Z_1
+
+##Value
+Vector of Factors & genetic_effects
