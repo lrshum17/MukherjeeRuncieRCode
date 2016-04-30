@@ -1,0 +1,22 @@
+---
+title: "sample_factors_scores"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Sample factor scores given factor loadings, U, factor heritabilities and phenotype residuals
+
+##Usage
+sample_factors_scores(Ytil, Factors, resid, genetic_effects, Z_1)
+
+##Arguments
+Ytil\
+Factors\
+resid\
+genetic_effects\
+Z_1
+
+##Value
+Factors
