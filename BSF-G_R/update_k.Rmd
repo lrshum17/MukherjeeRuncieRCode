@@ -2,7 +2,7 @@
 title: "update_k"
 author: "Leonardo Shu, Wenli Shi"
 date: "April 7, 2016"
-output: pdf_document
+output: html_document
 ---
 
 ##Description
