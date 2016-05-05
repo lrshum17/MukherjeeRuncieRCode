@@ -24,10 +24,10 @@ save_posterior_samples = function(sp_num, params, Posterior, resid, fixed_effect
     Posterior$G_h2 = rbind(Posterior$G_h2, zeros(prod(dim(G_h2))-nrow(Posterior$G_h2), sp))
   }
   
-  Posterior$Lambda[1:prod(dim(Lambda)), sp_num] = Lambda(:) # CHECK!!!!!!
+  Posterior$Lambda[1:prod(dim(Lambda)), sp_num] = t(t(c(Lambda)))
   Posterior$delta[1:prod(dim(delta)), sp_num] = delta
   Posterior$G_h2[1:prod(dim(G_h2)), sp_num] = G_h2
-  Posterior$U[1:prod(dim(U)), sp_num] = U(:) # check!!!!!
+  Posterior$U[1:prod(dim(U)), sp_num] = t(t(c(U)))
   
   Posterior$ps[,sp_num] = genetic_ps
   Posterior$resid_ps[,sp_num] = resid_ps
