@@ -3,7 +3,7 @@ require(PEIP)
 require(Matrix)
 require(pracma)
 
-fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, priors, draw_iter){
+fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, priors, draw_iter, Y, Z_1, Z_2, X){
   #% -- Daniel Runcie -- %
 
   #% Gibbs sampler for genetic covariance estimation based on mixed effects
@@ -75,16 +75,15 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%         draw_simulation_diagnostics.m: For simulated data with known true values
   #%         draw_results_diagnostics.m: Otherwise
 
-  ##  MAKE THESE VARIABLES?
-  clear Y
-  clear Z_1
-  clear Z_2
-  clear X
+  rm(Y)
+  rm(Z_1)
+  rm(Z_2)
+  rm(X)
   
-  global Y   #%n x p matrix of phenotypic data
-  global Z_1   #%n x r incidence matrix for additive genetic effects
-  global Z_2   #%n x r2 incidence matrix for another set of random effects
-  global X   #%n x b design matrix of fixed effects
+  #global Y   #%n x p matrix of phenotypic data
+  #global Z_1   #%n x r incidence matrix for additive genetic effects
+  #global Z_2   #%n x r2 incidence matrix for another set of random effects
+  #global X   #%n x b design matrix of fixed effects
   
   
   nrun = burn + sp * thin #% number of posterior samples
@@ -110,8 +109,8 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   VY = zeros(1, ncol(Y))
   
   for(j in 1:p){
-    Mean_Y[j] = mean(Y[~is.nan(Y[,j]),j])
-    VY[j] = var(Y[~is.nan(Y[,j]),j])
+    Mean_Y[j] = mean(Y[!(is.nan(Y[,j])),j])
+    VY[j] = var(Y[!(is.nan(Y[,j])),j])
     if(is.nan(VY[j])){
       VY[j] = 1
     }
@@ -122,19 +121,19 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
 
   #%determine if a design matrix (X) exists (is loaded from setup.mat). If
   #%not, make a dummy X-matrix with no columns.
-  if(~exists('X','var')){
+  if(!(exists('X','var'))){
     X = zeros(0,n)
   }
-  if(ncol(X) ~= n){
+  if(ncol(X) != n){
     X = zeros(0,n)
   }
 
   #%Determine if a second random effects design matrix exists. If not, make a
   #%dummy matrix
-  if(~exists('Z_2','var')){ #exists(Z_2) & exists('var')
+  if(!(exists('Z_2','var'))){ #exists(Z_2) & exists('var')
     Z_2 = zeros(0,n)
   }
-  if(ncol(Z_2) ~= n){
+  if(ncol(Z_2) != n){
     Z_2 = zeros(0,n)
   }
 
@@ -152,7 +151,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   resid$bs = priors$bs
   resid$Y = Y
   resid$p = p
-  resid$ps = rgamma(p, rate = resid$as, scale = 1/resid$bs)           #%residual precision
+  resid$ps = rgamma(p, shape = resid$as, scale = 1/resid$bs)           #%residual precision
 
   #%Factors. This struct holds all information about the latent factors,
   #%including the current number of factors, priors hyperparameters for the
@@ -173,8 +172,9 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   Factors$bd1 = bd1
   Factors$ad2 = ad2
   Factors$bd2 = bd2
-  Factors$psijh = matrix(rgamma(p*k, rate = df/2, scale = 2/df), nrow = p, ncol = k)   #%individual loadings precisions
-  Factors$delta = [gamrnd(ad1+10,1/bd1);gamrnd(ad2,1/bd2,[k-1,1])];  #% components of tauh !!!!!! NEED SIZE
+  Factors$psijh = matrix(rgamma(p*k, shape = df/2, scale = 2/df), nrow = p, ncol = k)   #%individual loadings precisions
+  Factors$delta = rbind(rgamma(1, shape = ad1+10, scale = 1/bd1),
+                        t(t(rgamma(k-1, shape = ad2, scale = 1/bd2)))) #% components of tauh !!!!!! NEED SIZE
   Factors$tauh = cumprod(Factors$delta)                              #%extra shrinkage of each loading column
   Factors$Plam = Factors$psijh * t(Factors$tauh)          #%total precision of each loading
   Factors$Lambda = zeros(p,k) + matrix(runif(m*n), nrow = m, ncol = n) * reshape(sqrt(1/Factors$Plam),p,k)   #%factor loadings
@@ -194,7 +194,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   bs = priors$bs
   genetic_effects$as = as
   genetic_effects$bs = bs
-  genetic_effects$ps = rgamma(p, rate = as, scale = 1/bs)
+  genetic_effects$ps = rgamma(p, shape = as, scale = 1/bs)
   genetic_effects$U = matrix(rnorm(k*r),k,r) * sqrt(Factors$h2)
   genetic_effects$d = matrix(rnorm(p*r),p,r) * 1/sqrt(genetic_effects$ps)
   
@@ -205,7 +205,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   bs = priors$bs
   interaction_effects$as = as
   interaction_effects$bs = bs
-  interaction_effects$ps = rgamma(p, rate = as, scale = 1/bs)
+  interaction_effects$ps = rgamma(p, shape = as, scale = 1/bs)
   interaction_effects$mean = zeros(p,r2)
   interaction_effects$n = r2
   interaction_effects$W = matrix(rnorm(p*r2),p,r2) * 1/sqrt(interaction_effects$ps)
@@ -276,7 +276,8 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%uses singular value decomposition of ZAZ for stability when ZAZ is low
   #%rank
   ZAZ = t(Z_1) %*% A %*% Z_1
-  [u,s,~] = svd(ZAZ)$d
+  u = svd(ZAZ)$d
+  s = svd(ZAZ)$u 
   eig_ZAZ$vectors = u
   eig_ZAZ$values = diag(s)
   
@@ -285,7 +286,10 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%inv(a*blkdiag(fixed_effects.cov,Ainv) + b*[X; Z_1][X; Z_1]') = Q*diag(1./(a.*s1+b.*s2))*Q'
   Design = rbind(X, Z_1)
   Design2 = Design %*% t(Design)
-  [~,~,q,S1,S2] = GSVD(Cholesky(blkdiag(fixed_effects$cov, Ainv)), Cholesky(Design2))
+  storeGSVD = GSVD(Cholesky(blkdiag(fixed_effects$cov, Ainv)), Cholesky(Design2))
+  q = storeGSVD$X
+  S1 = storeGSVD$C
+  S2 = storeGSVD$S
   svd_Design_Ainv$Q = t(solve(q))
   svd_Design_Ainv$s1 = diag(t(S1) %*% S1)
   svd_Design_Ainv$s2 = diag(t(S2) %*% S2)
@@ -295,7 +299,10 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%as above, but for random effects 2. Here, fixed effects will be conditioned on, not sampled simultaneously. Otherwise identical.
   Design = Z_2
   Design2 = Design %*% t(Design)
-  [~,~,q,S1,S2] = GSVD(Cholesky(A_2_inv), Cholesky(Design2))
+  storeGSVD = GSVD(Cholesky(A_2_inv), Cholesky(Design2))
+  q = storeGSVD$X
+  S1 = storeGSVD$C
+  S2 = storeGSVD$S
   svd_Z2_2_A2inv$Q = t(solve(q))
   svd_Z2_2_A2inv$s1 = diag(t(S1) %*% S1)
   svd_Z2_2_A2inv$s2 = diag(t(S2) %*%S2)
@@ -307,14 +314,20 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #% inv(a*Z_1*Z_1' + b*Ainv) = Q*diag(1./(a.*s1+b.*s2))*Q'
   #%similar to fixed effects + random effects 1 above, but no fixed effects.
   ZZt = Z_1 %*% t(Z_1)
-  [~,~,q,S1,S2] = GSVD(Cholesky(ZZt), Cholesky(Ainv))
+  storeGSVD = GSVD(Cholesky(ZZt), Cholesky(Ainv))
+  q = storeGSVD$X
+  S1 = storeGSVD$C
+  S2 = storeGSVD$S
   svd_ZZ_Ainv$Q = t(solve(q))
   svd_ZZ_Ainv$s1 = diag(t(S1) %*% S1)
   svd_ZZ_Ainv$s2 = diag(t(S2) %*% S2)
   
   #%------start gibbs sampling-----%
   sp_num = 0
+  
   #tic
+  t1=proc.time()
+  
   for(i in 1:nrun){
     #%fill in missing phenotypes
     #%conditioning on everything else
@@ -324,20 +337,20 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
       meanTraits = fixed_effects$B %*% X +  genetic_effects$d %*% Z_1 
       + interaction_effects$W %*% Z_2 + Factors$Lambda %*% Factors$scores
       meanTraits = t(meanTraits)        
-      resids = matrix(randn(dim(Y_full)), nrow(Y_full), ncol(Y_full)) * 1/sqrt(t(resid$ps))
+      resids = matrix(rnorm(dim(Y_full)), nrow(Y_full), ncol(Y_full)) * 1/sqrt(t(resid$ps))
       Y[phenMissing] = meanTraits[phenMissing] + resids[phenMissing]
     }
 
   #%sample Lambda
   #%conditioning on W, X, F, marginalizing over D
   Ytil = t(Y) - fixed_effects$B %*% X - interaction_effects$W %*% Z_2
-  [Factors] = sample_lambda(Ytil, Factors, resid, genetic_effects, eig_ZAZ)
+  Factors = sample_lambda(Ytil, Factors, resid, genetic_effects, eig_ZAZ)
   
   #%sample fixed effects + random effects 1 ([B;D])
   #%conditioning on W, F, L
   Ytil = t(Y) - interaction_effects$W %*% Z_2 - Factors$Lambda %*% Factors$scores
   N = genetic_effects$n + fixed_effects$b
-  [location_sample] = sample_means(Ytil, Qt_Design, N, resid, genetic_effects$ps, svd_Design_Ainv) #CHECK
+  location_sample = sample_means(Ytil, Qt_Design, N, resid, genetic_effects$ps, svd_Design_Ainv) #CHECK
   fixed_effects$B = location_sample[,1:fixed_effects$b]
   genetic_effects$d = location_sample[,fixed_effects$b+1:fixed_effects$b+genetic_effects$n]
   
@@ -405,16 +418,17 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
                                               
   #% -- provide run diagnostics and plots -- %
   if((i %% draw_iter) == 0){   
-    directory = strread(pwd, '%s', 'delimiter', '/')
-    disp(directory(end))
-    disp(i)
+    directory = getwd()
+      #strread(pwd, '%s', 'delimiter', '/') # CHECK
+    print(directory)
+    print(i)
     Factors$nofout[i] - Factors$num
-    elapsed = toc
+    elapsed = unname((proc.time()-t1)[3])
   
     #%output some running statistics on the current factors and their
     #%genetic variances
     c(Factors$delta, t(c(1:Factors$k)), Factors$h2, t(sum(t(Factors$scores)^2))/(nrow(Y)-1), t(sum(t(genetic_effects$U)^2))/(nrow(Z_1)-1))
-    disp(strcat('Time remaining:', num2str((nrun-i) * (elapsed/i) * 1/60)))
+    print(strcat('Time remaining:', num2str((nrun-i) * (elapsed/i) * 1/60)))
   
     #%make some plots of some running statistics
     if(simulation){
@@ -426,6 +440,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   }
 }
   #toc
+  (proc.time()-t1)[3]
   save('Posterior','Posterior','params')
   
   return(Posterior, params)
