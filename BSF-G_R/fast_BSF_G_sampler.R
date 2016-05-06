@@ -121,7 +121,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
 
   #%determine if a design matrix (X) exists (is loaded from setup.mat). If
   #%not, make a dummy X-matrix with no columns.
-  if(!(exists('X','var'))){
+  if(!(exists('X'))){
     X = zeros(0,n)
   }
   if(ncol(X) != n){
@@ -130,7 +130,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
 
   #%Determine if a second random effects design matrix exists. If not, make a
   #%dummy matrix
-  if(!(exists('Z_2','var'))){ #exists(Z_2) & exists('var')
+  if(!(exists('Z_2'))){
     Z_2 = zeros(0,n)
   }
   if(ncol(Z_2) != n){
@@ -326,7 +326,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   sp_num = 0
   
   #tic
-  t1=proc.time()
+  t1 = proc.time()
   
   for(i in 1:nrun){
     #%fill in missing phenotypes
