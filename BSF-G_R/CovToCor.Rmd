@@ -1,0 +1,18 @@
+---
+title: "CovToCor"
+author: "Leonardo Shu"
+date: "April 7, 2016"
+output: html_document
+---
+
+##Description
+Normalize a covariance matrix into a correlation matrix.
+
+##Usage
+Cor(X, Y)
+
+##Arguments
+X: Matrix
+
+##Value
+Matrix
