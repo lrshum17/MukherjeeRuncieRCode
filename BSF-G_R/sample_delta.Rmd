@@ -17,4 +17,4 @@ Factors
 Lambda2_resid
 
 ##Value
-A list with delta, tauh
+A vector with delta, tauh

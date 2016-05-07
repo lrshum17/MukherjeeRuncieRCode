@@ -344,13 +344,15 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   #%sample Lambda
   #%conditioning on W, X, F, marginalizing over D
   Ytil = t(Y) - fixed_effects$B %*% X - interaction_effects$W %*% Z_2
+  source("sample_lambda.R")
   Factors = sample_lambda(Ytil, Factors, resid, genetic_effects, eig_ZAZ)
   
   #%sample fixed effects + random effects 1 ([B;D])
   #%conditioning on W, F, L
   Ytil = t(Y) - interaction_effects$W %*% Z_2 - Factors$Lambda %*% Factors$scores
   N = genetic_effects$n + fixed_effects$b
-  location_sample = sample_means(Ytil, Qt_Design, N, resid, genetic_effects$ps, svd_Design_Ainv) #CHECK
+  source("sample_means.R")
+  location_sample = sample_means(Ytil, Qt_Design, N, resid, genetic_effects$ps, svd_Design_Ainv)
   fixed_effects$B = location_sample[,1:fixed_effects$b]
   genetic_effects$d = location_sample[,fixed_effects$b+1:fixed_effects$b+genetic_effects$n]
   
@@ -365,16 +367,19 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
 
   #%sample factor h2
   #%conditioning on F, marginalizing over U
+  source("sample_h2s_discrete.R")
   Factors = sample_h2s_discrete(Factors, eig_ZAZ)
   
   #%sample genetic effects (U)
   #%conditioning on F, Factor h2
-  genetic_effects = sample_Us(Factors, genetic_effects, svd_ZZ_Ainv)
+  source("sample_Us.R")
+  genetic_effects = sample_Us(Factors, genetic_effects, svd_ZZ_Ainv, Z_1)
   
   #%sample F
   #%conditioning on U, Lambda, B, D, W, factor h2s
   Ytil = t(Y) - fixed_effects$B %*% X - genetic_effects$d %*% Z_1 - interaction_effects$W %*% Z_2
-  Factors = sample_factors_scores(Ytil, Factors, resid, genetic_effects)
+  source("sample_faxtors_scores.R")
+  Factors = sample_factors_scores(Ytil, Factors, resid, genetic_effects, Z_1)
   
   #% -- Update ps -- %
   Lambda2 = (Factors$Lambda)^2    
@@ -392,6 +397,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
                                   nrow(interaction_effects$as), ncol(interaction_effects$as)) #%random effect 2 (W) residual precision
                                                                     
   #%------Update delta & tauh------%
+  source("sample_delta.R")
   c(delta, tauh) = sample_delta(Factors, Lambda2)
   Factors$delta = delta
   Factors$tauh = tauh
@@ -400,13 +406,15 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   Factors$Plam = Factors$psijh * t(Factors$tauh)
                                                 
   #% ----- adapt number of factors to samples ----%
+  source("update_k.R")
   c(Factors, genetic_effects) = update_k(Factors, genetic_effects, b0, b1, i, epsilon, prop)
                                               
   #% -- save sampled values (after thinning) -- %
   if((i %% thin) == 0 && i > burn){
                                                 
     sp_num = (i-burn)/thin
-                                                  
+    
+    source("save_posterior_samples.R")                                              
     Posterior =  save_posterior_samples(sp_num, params, Posterior, 
                                         resid,fixed_effects, genetic_effects, Factors, 
                                         interaction_effects)
@@ -432,9 +440,11 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
   
     #%make some plots of some running statistics
     if(simulation){
+      source("draw_simulation_diagnostics")
       draw_simulation_diagnostics(i,sp_num,params,Factors,genetic_effects,resid,Posterior,gen_factor_Lambda,error_factor_Lambda,G,R,h2)
     }
     else{
+      source("draw_results_diagnostics")
       draw_results_diagnostics(i, sp_num, params, Factors, Posterior)
     }
   }

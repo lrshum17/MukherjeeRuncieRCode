@@ -53,5 +53,5 @@ sample_delta = function(Factors, Lambda2_resid){
     tauh = cumprod(delta)
   }
   
-  return(list(delta, tauh))
+  return(c(delta, tauh))
 }
