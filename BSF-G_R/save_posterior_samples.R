@@ -38,7 +38,7 @@ save_posterior_samples = function(sp_num, params, Posterior, resid, fixed_effect
   Posterior$W = (Posterior$W * (sp_num-1) + (interaction_effects$W * sqrt(t(VY))))/sp_num
   
   if(sp_num %% 100 == 0){
-    save('Posterior', 'Posterior', 'params') #CHECK
+    save(Posterior, params, file = 'Posterior.Rdata')
   }
 
   return(Posterior)

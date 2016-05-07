@@ -37,7 +37,7 @@ sample_h2s_discrete = function(Factors, eig_ZAZ){
     norm_factor = max(log_ps[j,]) + log(sum(exp(log_ps[j,] - max(log_ps[j,]))))
     ps_j = exp(log_ps[j,] - norm_factor)
     log_ps[j,] = ps_j
-    Factors$h2[j] = sum(rand > cumsum(ps_j))/(s)
+    Factors$h2[j] = sum(rnorm(1) > cumsum(ps_j))/(s)
   }
 
   return(Factors)

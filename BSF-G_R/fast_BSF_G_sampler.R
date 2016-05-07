@@ -451,7 +451,7 @@ fast_BSF_G_sampler = function(burn, sp, thin, b0, b1, h2_divisions, epsilon, pri
 }
   #toc
   (proc.time()-t1)[3]
-  save('Posterior','Posterior','params')
+  save(Posterior, params, file = 'Posterior.Rdata')
   
   return(Posterior, params)
 }
