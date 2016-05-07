@@ -1,0 +1,21 @@
+---
+title: "draw_results_diagnostics"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Plots various diagnostic plots
+
+##Usage
+draw_results_diagnostics(sp_num,params,Factors,Posterior)
+
+##Arguments
+sp_num\
+params\
+Factors\
+Posterior
+
+##Value
+No return value but plots produced.

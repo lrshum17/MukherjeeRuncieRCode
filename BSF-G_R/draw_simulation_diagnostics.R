@@ -209,4 +209,3 @@ draw_simulation_diagnostics = function(sp_num,params,Factors,genetic_effects,res
     }
   }
 }
-  

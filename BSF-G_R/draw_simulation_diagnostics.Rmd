@@ -1,0 +1,29 @@
+---
+title: "draw_simulation_diagnostics"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Plots various diagnostic plots from simulations.
+
+##Usage
+draw_simulation_diagnostics = function(sp_num,params,Factors,genetic_effects,resid,
+                                       Posterior,gen_factor_Lambda,error_factor_Lambda,G,R,h2){
+
+##Arguments
+sp_num\
+params\
+Factors\
+genetic_effects\
+resid\
+Posterior\
+gen_factor_Lambda\
+error_factor_Lambda\
+G\
+R\
+h2
+
+##Value
+No return value but plots produced.
