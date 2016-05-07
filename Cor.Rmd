@@ -1,0 +1,20 @@
+---
+title: "Cor"
+author: "Leonardo Shu, Wenli Shi"
+date: "April 7, 2016"
+output: pdf_document
+---
+
+##Description
+Correlation matrix of correlations between rows of X and Y
+
+##Usage
+Cor(X, Y)
+
+##Arguments
+X: Matrix 1\
+\
+Y: Matrix 2
+
+##Value
+Matrix
