@@ -73,6 +73,7 @@ draw_results_diagnostics = function(sp_num,params,Factors,Posterior){
   par(mfrow = c(f1_row,f1_col))
   plot(Factors$no_f, ty="l")
   
+  source("CovToCor.R")
   if(sp_num > 10){
     #plot 2: visualize posterior mean genetic correlation matrix
     clims=c(-1, 1)
@@ -82,14 +83,14 @@ draw_results_diagnostics = function(sp_num,params,Factors,Posterior){
   
   
   #plot 3: visualize estimated genetic factor loading matrix
-  clim = max(.1,min(.75,max(max(abs(G_Lambda)))))
+  clim = max(.1,min(.75,max(abs(G_Lambda))))
   clims = c(-clim, clim)
   image(G_Lambda[p_view,], zlim = clims)
   #Lack of a colorbar
   
   if(sp_num > 10){
     #plot 4: visualize posterior mean genetic factor loading matrix
-    clim = min(.75,max(max(abs(G_Lambda))))
+    clim = min(.75,max(abs(G_Lambda)))
     clims = c(-clim, clim)
     image(G_Lambda[p_view,], zlim = clims)
     #lx = xlim;
@@ -97,7 +98,7 @@ draw_results_diagnostics = function(sp_num,params,Factors,Posterior){
   }
   
   #plot 5: visualize estimated residual factor loading matrix
-  clim = max(.1,min(.75,max(max(abs(E_Lambda)))))
+  clim = max(.1,min(.75,max(abs(E_Lambda))))
   clims = c(-clim, clim)
   image(E_Lambda[p_view,], zlim = clims)
   #Lack of a colorbar

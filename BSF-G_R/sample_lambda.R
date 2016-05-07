@@ -13,9 +13,9 @@ sample_lambda = function(Ytil, Factors, resid, genetic_effects, eig_ZAZ){
     means = FUDi %*% UtY[,j]
     Qlam = FUDi %*% t(FtU) + diag(Factors$Plam[j,])
     Llam = t(chol(Qlam))
-    vlam = inv(Llam) %*% means
-    mlam = inv(t(Llam)) %*% vlam
-    ylam = inv(t(Llam)) %*% Zlams[,j]
+    vlam = solve(Llam) %*% means
+    mlam = solve(t(Llam)) %*% vlam
+    ylam = solve(t(Llam)) %*% Zlams[,j]
     Factors$Lambda[j,] = (ylam + mlam)
   }
   

@@ -32,6 +32,7 @@ draw_simulation_diagnostics = function(sp_num,params,Factors,genetic_effects,res
   par(mfrow = c(f1_row,f1_col))
   
   clims=c(0, 1)
+  source("Cor.R")
   cors = abs(Cor(t(Lambda),t(actual_E_Lambda)))
   cors = rbind(cors,t(apply(cors,2,max)))
   cors = cbind(cors,t(t(apply(cors,1,max))))
@@ -40,6 +41,7 @@ draw_simulation_diagnostics = function(sp_num,params,Factors,genetic_effects,res
   
   #plot 2: visualize estimated genetic covariance matrix (as correlation matrix)
   clims=c(-1, 1)
+  source("CovToCor.R")
   image(CovToCor(G_est),zlim = clims)
   
   #plot 3: visualize estimated residual covariance matrix (as correlation matrix)
