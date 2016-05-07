@@ -55,7 +55,7 @@ p = nrow(Posterior$ps)
 sp_num = ncol(Posterior$Lambda)
 VY = matrix(1,1,p)
 k = nrow(Posterior$Lambda)/p
-h2s = Posterior$G_h2[,1:sp_num]  
+h2s = Posterior$G_h2[,1:sp_num]
 G_Lambdas = matrix(0, nrow(Posterior$Lambda), ncol(Posterior$Lambda))
 
 Lambda_est = matrix(0,p,k)
@@ -77,8 +77,8 @@ for (j in 1:sp_num){
   factor_h2s_est = factor_h2s_est + h2j/sp_num
 }
 
-source("cor.R")
-cors = abs(cor(t(Lambda_est),t(params$Lambda)))
+source("Cor.R")
+cors = abs(Cor(t(Lambda_est),t(params$Lambda)))
 
 k = ncol(params.Lambda)
 o = matrix(0,k,1)
@@ -99,8 +99,8 @@ for (j in 1:k){
 }
 
 # Figure of trace plots and histograms of the factor heritablities
-f4_row=8;
-f4_col=4;
+f4_row=8
+f4_col=4
 par(mfrow=c(f4_row,f4_col))
 for (ji in 1:min(4*8/2,length(o))){
   j = o(ji)
@@ -123,7 +123,7 @@ save('posterior_mean',file='Posterior_mean.Rdata')
 
 ## Produce plot of results
 # figure(5)
-p = nrow(Posterior$ps); 
+p = nrow(Posterior$ps)
 sp_num = ncol(Posterior$Lambda)
 VY = matrix(1,1,p)
 k = nrow(Posterior$Lambda)/p
@@ -135,7 +135,7 @@ for (j in 1:sp_num){
   Lj = matrix(Posterior$Lambda[,j],p,k) * (1/sqrt(t(VY)))
   h2j = Posterior$G_h2[,j]
   G_Lj = Lj %*% diag(sqrt(h2j))
-  G_Lambdas[,j] = matrix(G_Lj, nrow=nrow(G_Lj)*ncol(G_Lj) ncol=1)
+  G_Lambdas[,j] = matrix(G_Lj, nrow=nrow(G_Lj)*ncol(G_Lj), ncol=1)
   Gj = G_Lj %*% t(G_Lj) + diag(1/(t(VY) * Posterior$ps[,j]))
   G_est = G_est + Gj/sp_num
   
