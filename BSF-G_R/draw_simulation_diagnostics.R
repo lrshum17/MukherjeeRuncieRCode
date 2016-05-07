@@ -91,7 +91,6 @@ draw_simulation_diagnostics = function(sp_num,params,Factors,genetic_effects,res
     
     #figure(6) Check
     for (j in 1:min(k,5*5)){
-      subplot(5,5,j) # Check
       plot(actual_E_Lambda[,j],L[,j],pch=20)
       abline(a=0, b=1)
       abline(a=0, b=-1)
