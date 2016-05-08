@@ -21,7 +21,7 @@ draw_results_diagnostics = function(sp_num,params,Factors,Posterior){
     f2_row = 8
     f2_col = 2
     jpeg('Diagnostics_autoCorr_Lambda.jpg', width = 600, height = 800)
-    par(mfrow=c(8,2))
+    par(mfrow=c(f2_row,f2_col))
     for(k in 0:(min(2*f2_row,nrow(Posterior$Lambda)/p)-1)){
       o = order(-abs(apply(Posterior$Lambda[(1:p)+k*p,max(1,sp_num-100):sp_num],2,mean)))
       matplot(Posterior$Lambda[o[1:5]+k*p,1:sp_num], ty="l")
@@ -32,7 +32,9 @@ draw_results_diagnostics = function(sp_num,params,Factors,Posterior){
     
     #Figure of trace plots and histograms of the factor heritablities
     jpeg('Diagnostics_factor_selection.jpg', width = 600, height = 800)
-    par(mfrow=c(8,4))
+    f4_row = 8
+    f4_col = 4
+    par(mfrow=c(f4_row,f4_col))
     for (k in 1:min(2*f4_row,nrow(Posterior$G_h2))){
       h2s = Posterior$G_h2[k,1:sp_num]
       if (sum(h2s(!is.na(h2s)))==0){
