@@ -17,4 +17,4 @@ X: Matrix 1\
 Y: Matrix 2
 
 ##Value
-Matrix
+Correlation Matrix

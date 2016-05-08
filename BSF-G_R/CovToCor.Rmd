@@ -12,7 +12,7 @@ Normalize a covariance matrix into a correlation matrix.
 Cor(X, Y)
 
 ##Arguments
-X: Matrix
+X: Covariance Matrix
 
 ##Value
-Matrix
+Normalized Correlation Matrix

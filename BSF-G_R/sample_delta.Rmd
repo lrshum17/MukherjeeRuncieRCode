@@ -8,7 +8,7 @@ output: pdf_document
 ##Description
 Sample delta and tauh parameters that control the magnitudes of higher index factor loadings.
 
-##Usages
+##Usage
 sample_delta(Factors, Lambda2_resid)
 
 ##Arguments
@@ -17,4 +17,4 @@ Factors
 Lambda2_resid
 
 ##Value
-A vector with delta, tauh
+A vector with sampled delta, tauh

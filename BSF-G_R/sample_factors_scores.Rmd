@@ -19,4 +19,4 @@ genetic_effects\
 Z_1
 
 ##Value
-Factors
+Updated Factors structure
