@@ -22,4 +22,4 @@ prop\
 Z_1
 
 ##Value
-Vector of Factors & genetic_effects
+Vector of Factors Structure & genetic_effects Matrix

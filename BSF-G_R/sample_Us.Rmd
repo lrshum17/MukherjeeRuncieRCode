@@ -22,4 +22,4 @@ svd_ZZ_Ainv\
 Z_1
 
 ##Value
-Genetic_effects
+Genetic effects Matrix
